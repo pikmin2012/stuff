@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="10000" height="10000"
+style="border:1px solid #c3c3c3;">
+Your browser does not support the canvas element.
+</canvas>
+
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+var a = 1;
+const pi2 = Math.PI * 2;
+
+
+
+
+// Finally, draw outside loop
+
+
+var x =1;                     //  set your counter to 1
+
+function myLoop () {           //  create a loop function
+   setTimeout(function () {    //  call a 3s setTimeout when the loop is called
+//  r = '#' + (function co(lor){   return (lor +=
+// [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f'][Math.floor(Math.random()*16)])
+//  && (lor.length == 4) ?  lor : co(lor); })('')+(Math.floor( x-5 / x));
+//   console.log(r.substring(0,7));
+//      ctx.strokeStyle =  r.substring(0,7);
+ ctx.beginPath();
+
+  //ctx.strokeStyle =  '#3366cc';
+  
+    var   y= Math.pow(x, 2) - (5 *x) - x;
+    var z = Math.pow(y, -2) - (5 *y) - y;
+    // y = x2 + 2x -8
+console.log(x + ' ' + y + ' ' + z);
+    ctx.moveTo( x+500, y+500 ); // This was the line you were looking for
+   // ctx.fillText("x:"+x+"y:"+y+"z:"+z,x,y);
+     ctx.moveTo( x+500, y+500 ); // This was the line you were looking for
+    ctx.arc( x+500, y+500, Math.abs(z/5), x, Math.abs(z) );
+    //ctx.quadraticCurveTo(x,y,x,z);
+  //  ctx.bezierCurveTo(x,y,x,z,y,z);
+
+      x++;            
+      
+      ctx.stroke(); //  increment the counter
+      if (x < 110) {            //  if the counter < 10, call the loop function
+         myLoop();             //  ..  again which will trigger another 
+      }                        //  ..  setTimeout()
+   }, 100);
+   
+
+
+}
+
+myLoop(); 
+</script>
+
+</body>
+</html>

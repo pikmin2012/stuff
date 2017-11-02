@@ -1,0 +1,163 @@
+<canvas id='canvas'></canvas>
+<script>
+var c = document.getElementById('canvas');
+c.width = innerWidth;
+c.height = innerHeight;
+var ctx = c.getContext('2d');
+const STAR_RADIUS = 100;
+const PLANET_RADIUS = 10;
+const MOON_RADIUS = 4.5;
+var G = 1; // gravitational constant is not so constant as need to 
+           // scale it to find best value for the system. 
+           // for that I will scale it so that the suns orbital speed around the 
+           // planet is approx 0.1 pixels per frame
+const sunV = 0.1; // the sun's orbital desired speed. THis is used to tune G               
+const DRAW = function () {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+    ctx.fillStyle = this.col;
+    ctx.fill();
+    ctx.closePath();
+}
+var star = {
+    x: c.width / 2,
+    y: c.height / 2,
+    vx : 0,
+    vy : 0,
+    r: STAR_RADIUS,
+    mass : (4/3) * Math.pow(STAR_RADIUS,3) * Math.PI,
+    col : 'orange',
+    draw : DRAW,
+};
+// kludge to fix drift
+const sunStartX = star.x;
+const sunStartY = star.y;
+
+var node = {
+    x: c.width / 2 - STAR_RADIUS - PLANET_RADIUS * 5,
+    y: c.height / 2,
+    r: PLANET_RADIUS,
+    mass : (4/3) * Math.pow(PLANET_RADIUS,3) * Math.PI,
+    col : "blue",
+    draw : DRAW,
+    vx: -1,
+    vy: 0,
+};
+
+var moon = {
+    x: c.width / 2- STAR_RADIUS - PLANET_RADIUS * 7 ,
+    y: c.height / 2,
+    r: MOON_RADIUS,
+    mass : (4/3) * Math.pow(PLANET_RADIUS,3) * Math.PI,
+    col : "#888",
+    draw : DRAW,
+    vx: -1,
+    vy: 0,
+};
+const objects = [star, node];//, moon];
+function setup(){
+    var dist,dx,dy,o1,o2,v,c,dv;
+    o1 = objects[0];
+    o1.vx = 0;
+    o1.vy = 0;
+    for(var j = 0; j < objects.length; j ++){
+        if(j !== 0){ // object can not apply force to them selves
+            o2 = objects[j];
+            dx = o2.x - o1.x;
+            dy = o2.y - o1.y;
+            dist = Math.sqrt(dx * dx + dy * dy);
+            dx /= dist;  
+            dy /= dist;
+            // Find value og G
+            if(j === 1){ // is this not  sun
+                v = Math.sqrt(G  * ( o2.mass ) / dist);
+                dv = sunV - v;
+                while(Math.abs(dv) > sunV * sunV){
+                    if(dv < 0){  // sun too fast
+                        G *= 0.75;
+                    }else{
+                        G += G * 0.1;
+                    }
+                    v = Math.sqrt(G  * ( o2.mass ) / dist);
+                    dv = sunV - v;
+                }
+            }
+            
+            v = Math.sqrt(G  * ( o2.mass ) / dist);
+            o1.vx -= v * dy; // along the tangent
+            o1.vy += v * dx;
+        }
+    }
+    for(var i = 1; i < objects.length; i ++){
+        o1 = objects[i];
+        o1.vx = 0;
+        o1.vy = 0;
+        for(var j = 0; j <objects.length; j ++){
+            if(j !== i){
+                o2 = objects[j];
+                dx = o2.x - o1.x;
+                dy = o2.y - o1.y;
+                dist = Math.sqrt(dx * dx + dy * dy);
+                dx /= dist;  
+                dy /= dist;                    
+                v = Math.sqrt(G  * ( o2.mass ) / dist);
+                o1.vx += v * dy; // along the tangent
+                o1.vy -= v * dx;
+            }
+        }
+    }
+}
+
+
+//GAME LOOP
+function gameLoop(){
+    update();
+    render();
+    requestAnimationFrame(gameLoop);
+}
+
+// every object exerts a force on every other object
+function update(){
+    var dist,dx,dy,o1,o2,a;
+    // find force of acceleration each object applies to each object
+    for(var i = 0; i < objects.length; i ++){
+        o1 = objects[i];
+        for(var j = 0; j < objects.length; j ++){
+            if(i !== j){ // object can not apply force to them selves
+                o2 = objects[j];
+                dx = o2.x - o1.x;
+                dy = o2.y - o1.y;
+                dist = Math.sqrt(dx * dx + dy * dy);
+                dx /= dist;  // normalise the line between the objects (makes the vector 1 unit long)
+                dy /= dist;
+                // get force
+                a = (G  * o2.mass ) / (dist * dist);
+                o1.vx += a * dx;
+                o1.vy += a * dy;
+            }
+        }
+    }
+    // once all the forces have been found update objects positions
+    for(var i = 0; i < objects.length; i ++){
+        o1 = objects[i];
+        o1.x += o1.vx;
+        o1.y += o1.vy;
+    }
+            
+}
+
+function render(){
+    ctx.clearRect(0, 0, c.width, c.height);
+  // kludge to fix drift
+    var offsetX =  objects[0].x - sunStartX;
+    var offsetY =  objects[0].y - sunStartY;
+    ctx.setTransform(1,0,0,1,-offsetX,-offsetY);
+
+    for(var i = 0; i < objects.length; i ++){
+        objects[i].draw();
+    }
+    ctx.setTransform(1,0,0,1,0,0);
+}
+setup();
+requestAnimationFrame(gameLoop);
+</script>

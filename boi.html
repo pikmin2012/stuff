@@ -1,0 +1,128 @@
+<html>
+
+<head>
+    <script>
+        var dx;
+        var velocity = 3;
+        var dy;
+        var cursorX;
+        var cursorY;
+        var px = 500;
+        var pmx = -5;
+        var pmy = -5;
+        var py = 500;
+        var pxmax = 800;
+        var pxmin = 200;
+        var pymin = 200;
+        var pymax = 800;
+        function init() {
+
+
+            document.onmousemove = function(e) {
+                cursorX = e.pageX;
+                cursorY = e.pageY;
+            }
+
+      //      console.log(dx + dy);
+
+            loop();
+        }
+
+        function loop() {
+            // px = cursorX;
+            // py = cursorY;
+           // console.log(px);
+          //  console.log(py);
+            dx = px - parseInt(document.getElementById("a").style.left);
+            dy = py - parseInt(document.getElementById("a").style.top);
+            px = px + pmx;
+            py = py + pmy;
+           
+            document.getElementById("pmaxh").style.width = pxmax - pxmin ;
+            document.getElementById("pminh").style.width = pxmax - pxmin ;
+            document.getElementById("pmaxh").style.left = pxmin ;
+            document.getElementById("pminh").style.left = pxmin ;
+           if(px <pxmin +50 && py < pymin + 50){
+               pmy = pmy * -1;
+               py++;
+               console.log("corner");
+           } else
+            if (px < pxmin) {
+                pmx = pmx * -1;
+                //pmy = pmy * -1;
+            }else
+            if (px > pxmax) {
+                pmx = pmx * -1;
+               // pmy = pmy * -1;
+               
+            }else
+            if (py < pymin) {
+                pmy = pmy * -1;
+               // pmx = pmx * -1;
+                
+            }else
+            if (py > pymax) {
+                pmy = pmy * -1;
+              //  pmx = pmx * -1;
+            }
+          //  console.log("px" + px + " " + py);
+
+        //    var elmnt = document.getElementsByTagName("button")[0];
+        //    var cln = elmnt.cloneNode(true);
+         //   document.body.appendChild(cln);
+
+            var a = document.getElementById("a").style;
+            setTimeout(function() {
+
+                //console.log(dx + "dx " + dy)
+                angle = Math.atan2(dy, dx);
+                //angle2 = Math.atan(dy, dx) * 180 / Math.PI;
+
+
+               // console.log("angle" + angle);
+                var xVelocity = velocity * Math.cos(angle);
+                var yVelocity = velocity * Math.sin(angle);
+                //var nxVelocity = velocity  * Math.cos(angle2);
+                //var nyVelocity = velocity * Math.sin(angle2);
+                //console.log(xVelocity);
+              //  console.log(yVelocity);
+              //  console.log(a.left);
+                if (dx < -3 || dx > 3) {
+                    document.getElementById("a").style.left = parseInt(document.getElementById("a").style.left) + xVelocity + 'px';
+                }
+                if (dy > -3 || dy < 3) {
+                    document.getElementById("a").style.top = parseInt(document.getElementById("a").style.top) + yVelocity + 'px';
+                }
+
+                loop();
+            }, 10);
+        }
+    </script>
+
+</head>
+
+<body onload="init(); ">
+    <button id="a" style="position:absolute;left:750px;top:500px;">a</button>
+   
+    pxmax<input id="pxmax" value="800"  oninput="{  pxmax = parseInt(document.getElementById('pxmax').value);
+   
+    }"></input>
+    pxmin<input id="pxmin" value="200" oninput="{  pxmin = parseInt(document.getElementById('pxmin').value);
+    
+    }"></input>
+    <br>
+    pymax<input id="pymax" value="800" oninput="{  pymax = parseInt(document.getElementById('pymax').value);
+
+    }"></input>
+    pymin<input id="pymin" value="200" oninput="{  pymin = parseInt(document.getElementById('pymin').value);
+    
+    }"></input>
+
+<hr id="pmaxh" style="position:absolute;top:200px;width:800px;">
+<hr id="pminh" style="position:absolute;top:650px;width:800px">
+
+</body>
+
+</html>
+    
+  

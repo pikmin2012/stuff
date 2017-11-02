@@ -1,0 +1,94 @@
+<html>
+  <head>
+    <title>Chatmaster</title>
+    <style>
+    .style1{
+    background-color:#222223;
+    color:white;
+    }
+    .style2{
+    }
+    </style>
+  </head>
+  <body id="horse">
+    <ul id="messages"></ul>
+    <hr>
+    <form action="">
+      <input id="name" placeholder="Username"/> 
+      <br>
+      <input id="m" autocomplete="off" placeholder="Message"/>
+      <br>
+      <button>Send</button>
+      <div id="alert"></div>
+    </form>
+    <hr>
+      <button id="dark" onclick="{
+      document.getElementById('horse').setAttribute('class', 'style1');
+      } 
+      this.disabled=true
+      document.getElementById('light').disabled=false;">Dark Mode</button>
+      <button disabled id="light" onclick="{
+      document.getElementById('horse').setAttribute('class', 'style2');
+      } 
+      this.disabled=true
+      document.getElementById('dark').disabled=false;">Light Mode</button>
+
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+    $(function () {
+        var socket = io();
+
+       
+        $('form').submit(function(){
+              var textVal=document.getElementById('name').value;
+              var textVal2=document.getElementById('m').value;
+              var audio1 = new Audio('ding.wav');
+              
+
+              if (!textVal.match(/\S/)) {
+                  document.getElementById('alert').innerHTML = '<font color=red>You must have a username!</font><audio src="error.wav" autoplay />'
+                  return false;
+              } 
+              if (!textVal2.match(/\S/)) {
+                  document.getElementById('alert').innerHTML = '<font color=red>You must type a message!</font><audio src="error.wav" autoplay />'
+                  return false;
+              } 
+              
+              if (textVal.includes('<img')) {
+                  document.getElementById('alert').innerHTML = '<font color=red>You may not use images in your username!</font><audio src="error.wav" autoplay />'
+                  return false;
+              }  
+               if (textVal2.includes('<img')) {
+                  document.getElementById('alert').innerHTML = '<font color=red>You may not use images in your username!</font><audio src="error.wav" autoplay />'
+                  return false;
+              }  
+              if (textVal.includes('<iframe')) {
+                  document.getElementById('alert').innerHTML = '<font color=red>You may not use iframes in your username!</font><audio src="error.wav" autoplay />'
+                  return false;
+              } 
+
+
+              else 
+              {
+                  socket.emit('chat message', $('#name').val() + ' says: ' + $('#m').val());
+                  $('#m').val(''); + 'says' + $('#m').val('');
+                  document.getElementById('alert').innerHTML = '';
+                  document.getElementById('name').disabled = true;
+                  return false;
+                  
+              }
+        });
+        
+        // you can input html code into the name
+        
+        socket.on('chat message', function(msg){
+          $('#messages').append($('<li><audio src="ballon.wav" autoplay /><p>').html(msg));
+          
+          window.scrollTo(0, document.body.scrollHeight);
+
+        });
+      });
+    </script>
+  </body>
+</html>

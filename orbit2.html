@@ -1,0 +1,85 @@
+<style>
+
+</style>
+<script>
+var dx;
+var velocity = 3;
+var dy;
+ var cursorX;
+ var cursorY;
+ var px = 500;
+var pmx = -5;
+var pmy = -5;
+ var py = 500;
+function init(){
+   
+
+document.onmousemove = function(e){
+    cursorX = e.pageX;
+    cursorY = e.pageY;
+}
+
+console.log(dx + dy);
+
+    loop();
+}
+function loop(){
+   // px = cursorX;
+   // py = cursorY;
+ 
+    dx = px- parseInt(document.getElementById("a").style.left);
+ dy = py -  parseInt(document.getElementById("a").style.top);
+ px = px + pmx;
+ py = py + pmy;
+if(px < 200){
+    pmx = pmx * -1;
+     pmy = pmy * -1;
+}
+if(px > 800){
+    pmx = pmx * -1;
+     pmy = pmy * -1;
+}
+if(py < 200){
+    pmy = pmy * -1;
+}
+if(py > 800){
+    pmy = pmy* -1;
+}
+console.log("px" + px + " " + py);
+ 
+ var elmnt = document.getElementsByTagName("button")[0];
+var cln = elmnt.cloneNode(true);
+document.body.appendChild(cln);
+
+    var a = document.getElementById("a").style;
+     setTimeout(function () {
+
+console.log(dx +"dx " + dy)
+angle = Math.atan2(dy, dx);
+//angle2 = Math.atan(dy, dx) * 180 / Math.PI;
+
+
+console.log("angle" + angle);
+var xVelocity = velocity * Math.cos(angle);
+var yVelocity = velocity * Math.sin(angle);
+//var nxVelocity = velocity  * Math.cos(angle2);
+//var nyVelocity = velocity * Math.sin(angle2);
+console.log(xVelocity);
+console.log(yVelocity);
+console.log(a.left);
+if(dx < -3 || dx > 3){
+document.getElementById("a").style.left = parseInt(document.getElementById("a").style.left) + xVelocity + 'px';
+}
+if(dy > -3 || dy < 3){
+document.getElementById("a").style.top = parseInt(document.getElementById("a").style.top) + yVelocity + 'px';
+}
+
+loop();
+    }, 10);
+}
+
+</script>
+<body onload="init(); ">
+<button id="a" style="position:absolute;left:750px;top:500px;">a</button>
+<button id="b">b</button>
+</body>

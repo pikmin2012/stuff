@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head><title>Hello world</title></head>
+	<style>
+	div{
+		position: absolute;
+
+	}
+	</style>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	
+	
+
+	var player = 0;
+	  var socket = io();
+	  socket.on('newclientconnect',function(data){
+			  
+			  //document.write(data.description);
+	  });
+	   socket.on('create',function(data){
+	     
+	    
+	     
+	  });
+	  
+	  socket.on("player",function(data){
+	  	player = data.player;
+	  	console.log(data.player);
+	  
+	  		create(data.player);
+	  
+	  });
+	  
+	  function create(c){
+	  	console.log(c);
+	  	
+		for (i = 0; i < c; i++) { 
+				console.log("test");
+			 var element = document.createElement("div");
+			 
+			 element.setAttribute("id", i + 1);
+			
+			 var t = document.createTextNode(i);
+             element.appendChild(t);
+             
+             document.body.appendChild(element);
+		}
+	  }
+	  
+	  
+	  
+	  var Keys = {
+        up: false,
+        down: false,
+        left: false,
+        right: false
+    };
+	 window.onkeydown = function(e) {
+    var kc = e.keyCode;
+    e.preventDefault();
+
+    if      (kc === 37) Keys.left = true;  // only one key per event
+    else if (kc === 38) Keys.up = true;    // so check exclusively
+    else if (kc === 39) Keys.right = true;
+    else if (kc === 40) Keys.down = true;
+};
+
+window.onkeyup = function(e) {
+    var kc = e.keyCode;
+    e.preventDefault();
+
+    if      (kc === 37) Keys.left = false;
+    else if (kc === 38) Keys.up = false;
+    else if (kc === 39) Keys.right = false;
+    else if (kc === 40) Keys.down = false;
+};
+	  
+	  function init() {
+    setTimeout(function () {
+    	console.log("loop");
+        if (Keys.up) {
+    document.getElementById(player).style.top++;
+}
+else if (Keys.down) {  // both up and down does not work so check excl.
+    dy-=3;
+}
+
+if (Keys.left) {
+    dx+=3;
+}
+else if (Keys.right) {
+    dx-=3;
+}
+        init();
+    }, 100);
+}
+	  
+	</script>
+	<body onload="init();">Hello world
+<div id="mySelect">
+</div>
+	</body>
+	
+</html>
